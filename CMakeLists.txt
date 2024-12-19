@@ -8,6 +8,7 @@ add_subdirectory(libs/SDL2)
 file(GLOB IMGUI_SOURCES
     libs/imgui/imgui.cpp
     libs/imgui/imgui_draw.cpp
+    libs/imgui/imgui_tables.cpp
     libs/imgui/imgui_widgets.cpp
     libs/imgui/backends/imgui_impl_sdl2.cpp
     libs/imgui/backends/imgui_impl_sdlrenderer2.cpp
