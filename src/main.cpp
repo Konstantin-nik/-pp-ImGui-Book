@@ -37,8 +37,11 @@ bool InitializeSDL(SDL_Window*& window, SDL_Renderer*& renderer) {
 void Run(SDL_Window* window, SDL_Renderer* renderer) {
     bool running = true;
     SDL_Event event;
+    bool showNewWindow = false;
     
     while (running) {
+        Uint32 startTime = SDL_GetTicks(); // время начала кадра
+
         // Обработка событий SDL
         while (SDL_PollEvent(&event)) {
             ImGui_ImplSDL2_ProcessEvent(&event);
@@ -55,6 +58,26 @@ void Run(SDL_Window* window, SDL_Renderer* renderer) {
         // Рисование интерфейса с использованием ImGui
         ImGui::Begin("Hello, ImGui!");
         ImGui::Text("This is a simple ImGui window.");
+        if (ImGui::Button("Press me")) {
+            ImGui::Text("You're cool!");
+        }
+
+        if (ImGui::Button("Open New Window")) {
+            showNewWindow = true; 
+        }
+
+        if (showNewWindow) {
+            ImGui::SetNextWindowSize(ImVec2(200, 100));
+            ImGui::Begin("New Window", &showNewWindow);
+
+            ImGui::Text("This is a new window!");
+            if (ImGui::Button("Close")) {
+                showNewWindow = false;
+            }
+
+            ImGui::End();
+        }
+        
         if (ImGui::Button("Quit")) {
             running = false;
         }
@@ -66,7 +89,13 @@ void Run(SDL_Window* window, SDL_Renderer* renderer) {
         ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
         SDL_RenderPresent(renderer);
 
-        SDL_Delay(16); // ~60 FPS
+        // Контроль FPS
+        Uint32 endTime = SDL_GetTicks(); // время окончания кадра
+        Uint32 frameTime = endTime - startTime; // время одного кадра
+        if (frameTime < 16) { // если кадр обработан быстрее, чем 16 мс
+            SDL_Delay(16 - frameTime); // Задержка для компенсации
+        }
+        startTime = endTime; // обновляем время начала кадра
     }
 }
 
