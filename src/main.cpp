@@ -12,7 +12,13 @@ bool InitializeSDL(SDL_Window*& window, SDL_Renderer*& renderer) {
         return false;
     }
 
-    window = SDL_CreateWindow("Dear ImGui Demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow(
+        "Dear ImGui Demo", 
+        SDL_WINDOWPOS_CENTERED, 
+        SDL_WINDOWPOS_CENTERED, 
+        1280, 720, 
+        SDL_WINDOW_SHOWN | SDL_WINDOW_BORDERLESS
+    );
     if (!window) {
         std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
         return false;
@@ -50,6 +56,9 @@ void Run(SDL_Window* window, SDL_Renderer* renderer) {
             }
         }
 
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderClear(renderer);
+
         // Начало кадра
         ImGui_ImplSDLRenderer2_NewFrame();
         ImGui_ImplSDL2_NewFrame();
@@ -81,11 +90,11 @@ void Run(SDL_Window* window, SDL_Renderer* renderer) {
         if (ImGui::Button("Quit")) {
             running = false;
         }
+
         ImGui::End();
 
         // Отображение интерфейса
         ImGui::Render();
-        SDL_RenderClear(renderer);
         ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
         SDL_RenderPresent(renderer);
 
@@ -95,6 +104,7 @@ void Run(SDL_Window* window, SDL_Renderer* renderer) {
         if (frameTime < 16) { // если кадр обработан быстрее, чем 16 мс
             SDL_Delay(16 - frameTime); // Задержка для компенсации
         }
+
         startTime = endTime; // обновляем время начала кадра
     }
 }
